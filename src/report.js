@@ -15,20 +15,22 @@ async function driverReport() {
     const trips = await getTrips();
 
     // Create an object to store the driver report
-    const driversReport = {};
+    const driverAccess = {};
 
     // Process each trip in the obtained list
     for (const trip of trips) {
       // Extract driver ID from the current trip
-      const driverID = trip.driverID;
+      const driverIdInfo = trip.driverIdInfo;
 
       // Check if the driver's report already exists
-      if (!driversReport[driverID]) {
+      if (!driverAccess[driverIdInfo]) {
         // If not, initialize the driver's information
-        const driverDetail = await getDriver(driverID);
-        driversReport[driverID] = {
+       
+       
+        const driverDetail = await getDriver(driverIdInfo);
+        driverAccess[driverIdInfo] = {
           fullName: driverDetail.name,
-          id: driverID,
+          id: driverIdInfo,
           phone: driverDetail.phone,
           noOfTrips: 0,
           noOfVehicles: 0,
@@ -44,20 +46,20 @@ async function driverReport() {
 
       // Update driver's trip information
       const isCash = trip.isCash === true;
-      driversReport[driverID].noOfTrips++;
-      driversReport[driverID].totalAmountEarned += trip.billAmount;
+      driverAccess[driverIdInfo].noOfTrips++;
+      driverAccess[driverIdInfo].totalAmountEarned += trip.billAmount;
 
       // Update cash and non-cash trip counts and amounts
       if (isCash) {
-        driversReport[driverID].noOfCashTrips++;
-        driversReport[driverID].totalCashAmount += trip.billedAmount;
+        driverAccess[driverIdInfo].noOfCashTrips++;
+        driverAccess[driverIdInfo].totalCashAmount += trip.billedAmount;
       } else {
-        driversReport[driverID].noOfNonCashTrips++;
-        driversReport[driverID].totalNonCashAmount += trip.billedAmount;
+        driverAccess[driverIdInfo].noOfNonCashTrips++;
+        driverAccess[driverIdInfo].totalNonCashAmount += trip.billedAmount;
       }
 
       // Populate the trip's details in the driver's report
-      driversReport[driverID].trips.push({
+      driverAccess[driverIdInfo].trips.push({
         user: trip.user.name,
         created: trip.created,
         pickup: trip.pickup.address,
@@ -68,15 +70,15 @@ async function driverReport() {
     }
 
     // Process driver and vehicle information in parallel
-    const driverIDs = Object.keys(driversReport);
+    const driverIdInfos = Object.keys(driverAccess);
 
     // Create an array of promises for driver information retrieval
-    const driverInfoPromises = driverIDs.map(async (driverID) => {
+    const driverInfoPromises = driverIdInfos.map(async (driverIdInfo) => {
       // Get detailed driver information
-      const driverInfo = await getDriver(driverID);
+      const driverInfo = await getDriver(driverIdInfo);
 
       // Update the number of vehicles for the driver
-      driversReport[driverID].noOfVehicles = driverInfo.vehicleID.length;
+      driverAccess[driverIdInfo].noOfVehicles = driverInfo.vehicleID.length;
 
       // Create an array of promises for vehicle information retrieval
       const vehicleInfoPromises = driverInfo.vehicleID.map(async (vehicleID) => {
@@ -92,14 +94,14 @@ async function driverReport() {
       const vehicleInfo = await Promise.all(vehicleInfoPromises);
 
       // Update the driver's report with vehicle information
-      driversReport[driverID].vehicles = vehicleInfo;
+      driverAccess[driverIdInfo].vehicles = vehicleInfo;
     });
 
     // Wait for all driver information promises to resolve
     await Promise.all(driverInfoPromises);
 
     // Return the driver report as an array of driver objects
-    return Object.values(driversReport);
+    return Object.values(driverAccess);
   } catch (error) {
     // If any error occurs, throw the error
     throw error;
