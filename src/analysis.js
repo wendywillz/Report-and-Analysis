@@ -1,4 +1,4 @@
-const { getTrips, getDriver, getVehicle } = require('api');
+const { getTrips, getDriver} = require('api');
  
 /**
 * This function should return the data for drivers in the specified format
@@ -7,13 +7,12 @@ const { getTrips, getDriver, getVehicle } = require('api');
 *
 * @returns {any} Driver report data
 */
-async function driverReport() {
-  // Your code goes here
-
+async function analysis() {
   
   try {
     const trips = await getTrips();
-    //identify number of cash trips
+    
+
     const cashTrips = trips.filter((obj) => {
       return obj.isCash === true;
     });
@@ -101,7 +100,7 @@ async function driverReport() {
  
     const sortedEntries = countEntries.sort((a,b) => b[1] -a[1])
  
-   const maxDriverID = sortedEntries[0][0].toString()
+   const maxDriverID = sortedEntries[0][0]
    const maxDriverTrips = sortedEntries[0][1]
  
     //extract driver information of driver with the most no of trips
@@ -190,6 +189,80 @@ async function driverReport() {
 }
  
 
-module.exports = driverReport;
+module.exports = analysis;
  
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//identify number of cash trips
+
+    // let cashTrips = 0;
+    // let nonCashTrips = 0;
+    // let sumOfCashTrips = 0;
+    // let sumOfNonCashTrips = 0;
+    // let sumOfTrips = 0;
+
+    // for (const trip of trips) {
+    //   if (trip.isCash) {
+    //     cashTrips++;
+    //     sumOfCashTrips += trip.amount;
+    //   }
+
+    //   if (!trip.isCash) {
+    //     nonCashTrips++;
+    //     sumOfNonCashTrips += trip.amount;
+    //   }
+
+    //   sumOfTrips += trip.amount;
+    // }

@@ -1,4 +1,4 @@
-const { getTrips } = require('api');
+const { getTrips, getDriver, getVehicle } = require('api');
 
 /**
  * This function should return the data for drivers in the specified format
@@ -70,10 +70,10 @@ async function driverReport() {
     }
 
     // Process driver and vehicle information in parallel
-    const driverIdInfos = Object.keys(driverAccess);
+    const driverInformation = Object.keys(driverAccess);
 
     // Create an array of promises for driver information retrieval
-    const driverInfoPromises = driverIdInfos.map(async (driverIdInfo) => {
+    const driverInfoPromises = driverInformation.map(async (driverIdInfo) => {
       // Get detailed driver information
       const driverInfo = await getDriver(driverIdInfo);
 
@@ -91,14 +91,14 @@ async function driverReport() {
       });
 
       // Wait for all vehicle information promises to resolve
-      const vehicleInfo = await Promise.all(vehicleInfoPromises);
+      const vehicleInfo = await Promise.allSettled(vehicleInfoPromises);
 
       // Update the driver's report with vehicle information
       driverAccess[driverIdInfo].vehicles = vehicleInfo;
     });
 
     // Wait for all driver information promises to resolve
-    await Promise.all(driverInfoPromises);
+    await Promise.allSettled(driverInfoPromises);
 
     // Return the driver report as an array of driver objects
     return Object.values(driverAccess);
@@ -110,3 +110,63 @@ async function driverReport() {
 
  
 module.exports = driverReport;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
